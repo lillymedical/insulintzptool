@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ajuste de Insulina — Tirzepatida</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --red:#C8102E; --red-dark:#A00D24; --red-light:#F9E5E8;
+  --navy:#1A2744; --navy-mid:#243461;
+  --white:#FFFFFF;
+  --g50:#F7F8FA; --g100:#EEF0F4; --g200:#DDE1E9;
+  --g400:#9AA3B4; --g600:#5A6478; --g800:#1E2535;
+  --green:#1A6B3A; --green-l:#E5F4EC;
+  --amber:#9A5A00; --amber-l:#FEF6E4;
+  --blue:#1A52A0; --blue-l:#E7EFFE;
+  --r:8px; --r-lg:14px;
+  --sh:0 3px 10px rgba(0,0,0,0.09),0 1px 3px rgba(0,0,0,0.05);
+}
+html { scroll-behavior:smooth; }
+body { font-family:'Source Sans 3',system-ui,sans-serif; background:var(--g50); color:var(--g800); line-height:1.55; }
+
+/* HEADER */
+.hdr { background:var(--navy); position:sticky; top:0; z-index:200; box-shadow:0 2px 10px rgba(0,0,0,0.25); }
+.hdr-in { max-width:780px; margin:0 auto; padding:11px 24px; display:flex; align-items:center; justify-content:space-between; }
+.hdr-left { display:flex; align-items:center; gap:11px; }
+.lm { width:32px; height:32px; background:var(--red); border-radius:6px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.lm span { font-family:'Source Serif 4',serif; font-size:19px; font-weight:600; color:#fff; line-height:1; }
+.hn { font-size:13px; font-weight:500; color:rgba(255,255,255,.9); }
+.hd { font-size:11px; color:rgba(255,255,255,.35); font-weight:300; }
+.hpill { font-size:10px; font-weight:500; letter-spacing:.09em; text-transform:uppercase; background:rgba(200,16,46,.2); color:rgba(255,255,255,.6); border:1px solid rgba(200,16,46,.3); padding:3px 10px; border-radius:20px; }
+
+/* HERO */
+.hero { background:var(--red); border-bottom:3px solid var(--red-dark); padding:30px 24px 26px; text-align:center; }
+.hero-ey { font-size:10px; font-weight:500; letter-spacing:.14em; text-transform:uppercase; color:rgba(255,255,255,.55); margin-bottom:10px; }
+.hero h1 { font-family:'Source Serif 4',serif; font-size:clamp(19px,4vw,26px); font-weight:300; color:#fff; line-height:1.3; margin-bottom:6px; }
+.hero h1 strong { font-weight:600; }
+.hero p { font-size:13px; color:rgba(255,255,255,.65); max-width:440px; margin:0 auto; font-weight:300; }
+
+/* MAIN */
+.main { max-width:780px; margin:0 auto; padding:24px 24px 80px; }
+
+/* FORM CARD */
+.fc { background:var(--white); border:1px solid var(--g200); border-radius:var(--r-lg); box-shadow:var(--sh); overflow:hidden; margin-bottom:20px; }
+.fc-hd { padding:13px 20px; border-bottom:1px solid var(--g100); background:var(--g50); display:flex; align-items:center; gap:8px; }
+.fc-dot { width:7px; height:7px; background:var(--red); border-radius:50%; }
+.fc-hd h2 { font-size:13px; font-weight:500; color:var(--g800); }
+.fc-bd { padding:20px; }
+.fg { display:grid; grid-template-columns:1fr 1fr; gap:13px; }
+.fg3 { grid-template-columns:1fr 1fr 1fr; }
+.fld { display:flex; flex-direction:column; gap:5px; }
+.fld label { font-size:11px; font-weight:500; color:var(--g600); letter-spacing:.03em; text-transform:uppercase; }
+.fld .hint { font-size:11px; color:var(--g400); font-weight:300; }
+.fld input, .fld select { height:40px; padding:0 12px; font-size:14px; font-family:'Source Sans 3',sans-serif; border:1.5px solid var(--g200); border-radius:var(--r); color:var(--g800); background:var(--white); transition:border-color .12s,box-shadow .12s; outline:none; -webkit-appearance:none; }
+.fld input:focus,.fld select:focus { border-color:var(--red); box-shadow:0 0 0 3px rgba(200,16,46,.10); }
+.fld input::placeholder { color:var(--g400); }
+.divider { border:none; border-top:1px solid var(--g100); margin:16px 0; }
+.btn-row { display:flex; justify-content:space-between; align-items:center; }
+.btn { height:40px; padding:0 16px; font-size:13px; font-weight:500; font-family:'Source Sans 3',sans-serif; border-radius:var(--r); cursor:pointer; border:1.5px solid var(--g200); background:var(--white); color:var(--g600); transition:all .12s; display:inline-flex; align-items:center; gap:6px; }
+.btn:hover { background:var(--g100); }
+.btn.primary { background:var(--red); border-color:var(--red); color:#fff; padding:0 24px; font-size:14px; box-shadow:0 2px 6px rgba(200,16,46,.25); }
+.btn.primary:hover { background:var(--red-dark); border-color:var(--red-dark); }
+.btn.ghost { color:var(--g400); border-color:transparent; background:transparent; }
+.btn.ghost:hover { background:var(--g100); color:var(--g600); }
+
+/* MODE TOGGLE */
+.mode-row { display:flex; align-items:center; justify-content:flex-end; margin-bottom:14px; }
+.mtog { display:flex; background:var(--g100); border-radius:20px; padding:3px; gap:3px; }
+.mbtn { height:28px; padding:0 14px; font-size:12px; font-weight:500; font-family:'Source Sans 3',sans-serif; border:none; background:transparent; border-radius:17px; cursor:pointer; color:var(--g600); transition:all .15s; }
+.mbtn.active { background:var(--white); color:var(--navy); box-shadow:0 1px 4px rgba(0,0,0,.12); }
+
+/* RESULTS */
+#results { display:none; animation:up .3s ease; }
+@keyframes up { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+/* RESULT BAR */
+.rbar { background:var(--navy); border-left:4px solid var(--red); border-radius:var(--r-lg); padding:18px 22px; margin-bottom:16px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
+.rbar-title { font-family:'Source Serif 4',serif; font-size:17px; font-weight:400; color:#fff; margin-bottom:6px; }
+.chips { display:flex; flex-wrap:wrap; gap:5px; }
+.chip { font-size:12px; padding:3px 9px; border-radius:20px; background:rgba(255,255,255,.08); color:rgba(255,255,255,.62); border:1px solid rgba(255,255,255,.1); }
+.chip strong { color:#fff; }
+.bprint { height:32px; padding:0 12px; font-size:12px; font-weight:500; font-family:'Source Sans 3',sans-serif; border-radius:var(--r); cursor:pointer; border:1px solid rgba(255,255,255,.15); background:rgba(255,255,255,.07); color:rgba(255,255,255,.65); display:flex; align-items:center; gap:5px; white-space:nowrap; flex-shrink:0; transition:background .12s; }
+.bprint:hover { background:rgba(255,255,255,.13); }
+
+/* ALERTS */
+.al { border-radius:var(--r); padding:11px 13px; margin-bottom:10px; font-size:13px; border-left:3px solid; display:flex; gap:8px; align-items:flex-start; line-height:1.5; }
+.al strong { font-weight:500; display:block; margin-bottom:1px; }
+.al.warn  { background:var(--amber-l); border-color:var(--amber); color:#7A4500; }
+.al.info  { background:var(--blue-l);  border-color:var(--blue);  color:#123280; }
+.al.ok    { background:var(--green-l); border-color:var(--green); color:#124A28; }
+
+/* ══════════════════════════════════════════
+   SIMPLIFIED VIEW — cartão clínico
+══════════════════════════════════════════ */
+.card-clinico { background:var(--white); border:1px solid var(--g200); border-radius:var(--r-lg); box-shadow:var(--sh); overflow:hidden; margin-bottom:14px; }
+
+/* Cabeçalho vermelho compacto */
+.cc-hd { background:var(--red); padding:12px 18px; display:flex; align-items:center; justify-content:space-between; }
+.cc-hd-left {}
+.cc-hd-tag { font-size:10px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.6); margin-bottom:2px; }
+.cc-hd-title { font-size:15px; font-weight:600; color:#fff; }
+.cc-hd-right { text-align:right; }
+.cc-hd-dose { font-size:22px; font-weight:600; color:#fff; line-height:1; }
+.cc-hd-dose-lbl { font-size:10px; color:rgba(255,255,255,.6); margin-top:1px; }
+
+/* Grade de ações */
+.cc-steps { display:grid; grid-template-columns:auto 1fr; align-items:stretch; }
+.cc-step-row { display:contents; }
+.cc-step-row:not(:last-child) .cs-marker::after {
+  content:''; position:absolute; left:50%; top:100%; transform:translateX(-50%);
+  width:1px; height:100%; background:var(--g200);
+}
+.cs-marker-wrap { padding:14px 0 14px 16px; display:flex; flex-direction:column; align-items:center; position:relative; }
+.cs-marker { width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:600; flex-shrink:0; position:relative; z-index:1; }
+.cs-m-red  { background:var(--red); color:#fff; }
+.cs-m-amb  { background:#F59E0B; color:#fff; }
+.cs-m-grn  { background:var(--green); color:#fff; }
+.cs-line { flex:1; width:1px; background:var(--g200); margin-top:6px; }
+.cs-body { padding:14px 16px 14px 10px; }
+.cs-period { font-size:10px; font-weight:500; letter-spacing:.07em; text-transform:uppercase; color:var(--g400); margin-bottom:3px; }
+.cs-action { font-size:14px; font-weight:500; color:var(--g800); margin-bottom:2px; }
+.cs-detail { font-size:12px; color:var(--g600); }
+.cs-dose-pill { display:inline-block; font-size:13px; font-weight:600; padding:1px 8px; border-radius:5px; }
+.cs-dose-pill.old { background:var(--red-light); color:var(--red-dark); }
+.cs-dose-pill.nw  { background:var(--green-l); color:var(--green); }
+
+/* Linha de alerta de emergência */
+.cc-alert { background:var(--navy); padding:11px 18px; display:flex; align-items:center; gap:10px; }
+.cc-alert-icon { font-size:14px; flex-shrink:0; }
+.cc-alert-text { font-size:12px; color:rgba(255,255,255,.75); }
+.cc-alert-text strong { color:#fff; font-weight:600; }
+
+/* Tabela de titulação */
+.cc-table-wrap { border-top:1px solid var(--g100); }
+.cc-table-title { padding:10px 18px 6px; font-size:10px; font-weight:500; letter-spacing:.09em; text-transform:uppercase; color:var(--g400); }
+.cctbl { width:100%; border-collapse:collapse; font-size:13px; }
+.cctbl th { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:.07em; color:var(--g600); text-align:left; padding:7px 12px; background:var(--g50); border-bottom:1px solid var(--g100); }
+.cctbl th:last-child { text-align:center; }
+.cctbl td { padding:9px 12px; border-bottom:1px solid var(--g100); color:var(--g800); vertical-align:middle; }
+.cctbl td:last-child { text-align:center; }
+.cctbl tr:last-child td { border-bottom:none; }
+.cctbl tr:hover td { background:var(--g50); }
+.cctbl tr.target-row td { background:#F0FAF4; }
+.adj { display:inline-block; font-size:12px; font-weight:600; padding:3px 11px; border-radius:5px; min-width:90px; text-align:center; }
+.adj.d4 { background:#FECACA; color:#7F1D1D; }
+.adj.d2 { background:var(--red-light); color:var(--red-dark); }
+.adj.ok { background:var(--green-l); color:var(--green); }
+.adj.u2 { background:var(--blue-l); color:var(--blue); }
+.adj.u4 { background:#BFDBFE; color:#1e40af; }
+.adj.u6 { background:#93C5FD; color:#1e3a8a; }
+
+/* ══════════════════════════════════════════
+   COMPLETE VIEW
+══════════════════════════════════════════ */
+.blk { background:var(--white); border:1px solid var(--g200); border-radius:var(--r-lg); box-shadow:0 1px 3px rgba(0,0,0,0.07); margin-bottom:14px; overflow:hidden; }
+.blk-hd { padding:12px 20px; border-bottom:1px solid var(--g100); background:var(--g50); display:flex; align-items:center; gap:9px; }
+.blk-num { width:22px; height:22px; border-radius:50%; background:var(--red); color:#fff; font-size:11px; font-weight:600; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.blk-hd h3 { font-size:13px; font-weight:500; color:var(--g800); }
+.blk-bd { padding:18px 20px; }
+.step { display:flex; gap:12px; padding:13px 14px; border:1px solid var(--g200); border-radius:var(--r); margin-bottom:9px; }
+.si { width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:15px; flex-shrink:0; }
+.si.d0  { background:var(--red-light); }
+.si.s14 { background:var(--amber-l); }
+.si.s5p { background:var(--green-l); }
+.sw { font-size:10px; font-weight:500; letter-spacing:.08em; text-transform:uppercase; color:var(--g400); margin-bottom:3px; }
+.st { font-size:13px; font-weight:500; color:var(--g800); margin-bottom:3px; }
+.sb { font-size:12px; color:var(--g600); line-height:1.55; }
+.tg { display:inline-block; font-size:12px; font-weight:500; padding:1px 7px; border-radius:4px; margin:0 1px; }
+.tg.old { background:var(--red-light); color:var(--red-dark); }
+.tg.nw  { background:var(--green-l); color:var(--green); }
+.tg.tgt { background:var(--blue-l); color:var(--blue); }
+.tg.amb { background:var(--amber-l); color:var(--amber); }
+.tl { position:relative; padding-left:20px; }
+.tl::before { content:''; position:absolute; left:6px; top:8px; bottom:8px; width:1px; background:var(--g200); }
+.tli { position:relative; padding:0 0 14px 14px; }
+.tli::before { content:''; position:absolute; left:-8px; top:5px; width:7px; height:7px; border-radius:50%; background:var(--red); border:2px solid #fff; box-shadow:0 0 0 1px var(--g200); }
+.tli.done::before { background:var(--green); box-shadow:0 0 0 1px var(--green); }
+.tw { font-size:11px; font-weight:500; color:var(--red); margin-bottom:1px; }
+.tt { font-size:13px; font-weight:500; color:var(--g800); }
+.td { font-size:12px; color:var(--g600); margin-top:1px; }
+.ttbl2 { width:100%; border-collapse:collapse; font-size:13px; }
+.ttbl2 th { font-size:10px; font-weight:500; text-transform:uppercase; letter-spacing:.07em; color:var(--g600); text-align:left; padding:7px 12px; background:var(--g50); border-bottom:1px solid var(--g200); }
+.ttbl2 td { padding:8px 12px; border-bottom:1px solid var(--g100); color:var(--g800); }
+.ttbl2 tr:last-child td { border-bottom:none; }
+.sg { display:grid; grid-template-columns:1fr 1fr; gap:9px; }
+.sc { border-radius:var(--r); padding:13px; border:1px solid; }
+.sc.red { background:var(--red-light); border-color:#FECACA; }
+.sc.amb { background:var(--amber-l);  border-color:#FDE68A; }
+.sc.grn { background:var(--green-l);  border-color:#BBF7D0; }
+.sc.blu { background:var(--blue-l);   border-color:#BFDBFE; }
+.sc-lbl { font-size:10px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; margin-bottom:4px; }
+.sc.red .sc-lbl { color:var(--red-dark); }
+.sc.amb .sc-lbl { color:var(--amber); }
+.sc.grn .sc-lbl { color:var(--green); }
+.sc.blu .sc-lbl { color:var(--blue); }
+.sc p { font-size:12px; color:var(--g600); line-height:1.5; }
+.ref { background:var(--g50); border:1px solid var(--g200); border-radius:var(--r); padding:11px 13px; font-size:11px; color:var(--g600); line-height:1.6; margin-top:14px; }
+.ref strong { color:var(--g800); display:block; margin-bottom:2px; font-size:10px; text-transform:uppercase; letter-spacing:.06em; }
+
+/* FOOTER */
+.ftr { background:var(--navy); border-top:3px solid var(--red); color:rgba(255,255,255,.28); text-align:center; padding:16px 24px; font-size:11px; line-height:1.6; }
+.ftr strong { color:rgba(255,255,255,.5); }
+
+/* PRINT */
+@media print {
+  .hdr,.hero,.fc,.mode-row,.bprint,.btn-row,.ftr { display:none!important; }
+  body { background:#fff; }
+  #results { display:block!important; }
+  .blk,.card-clinico { box-shadow:none; break-inside:avoid; }
+  .rbar { background:#1A2744!important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+}
+@media (max-width:560px) {
+  .fg,.fg3 { grid-template-columns:1fr; }
+  .sg { grid-template-columns:1fr; }
+  .rbar { flex-direction:column; }
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="hdr-in">
+    <div class="hdr-left">
+      <div class="lm"><span>L</span></div>
+      <div>
+        <div class="hn">Medical Affairs · Cardiometabolismo</div>
+        <div class="hd">Eli Lilly do Brasil</div>
+      </div>
+    </div>
+    <div class="hpill">Uso médico</div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-ey">SURPASS-6 · Protocolo clínico</div>
+  <h1>Protocolo de Ajuste e Titulação da<br><strong>Insulina Basal com Tirzepatida</strong></h1>
+  <p>Guia de manejo da insulina glargina para pacientes com DM2 iniciando tirzepatida</p>
+</div>
+
+<main class="main">
+
+  <div class="fc">
+    <div class="fc-hd">
+      <div class="fc-dot"></div>
+      <h2>Dados do paciente</h2>
+    </div>
+    <div class="fc-bd">
+      <div class="fg">
+        <div class="fld">
+          <label>Dose de insulina glargina</label>
+          <input type="number" id="ins-dose" min="1" max="400" placeholder="ex: 46" step="1">
+          <span class="hint">IU/dia</span>
+        </div>
+        <div class="fld">
+          <label>Peso do paciente</label>
+          <input type="number" id="peso" min="40" max="300" placeholder="ex: 90" step="0.1">
+          <span class="hint">kg</span>
+        </div>
+      </div>
+      <div class="fg fg3" style="margin-top:11px;">
+        <div class="fld">
+          <label>Data de início</label>
+          <input type="date" id="start-date">
+        </div>
+        <div class="fld">
+          <label>Dose alvo tirzepatida</label>
+          <select id="tirz-dose">
+            <option value="">Selecione...</option>
+            <option value="5">5 mg</option>
+            <option value="10">10 mg</option>
+            <option value="15">15 mg</option>
+          </select>
+        </div>
+        <div class="fld">
+          <label>HbA1c atual</label>
+          <input type="number" id="hba1c" min="5" max="15" step="0.1" placeholder="ex: 8.8">
+          <span class="hint">%</span>
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="btn-row">
+        <button class="btn ghost" onclick="limpar()">Limpar</button>
+        <button class="btn primary" onclick="calcular()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          Gerar protocolo
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="results">
+
+    <div class="mode-row">
+      <div class="mtog">
+        <button class="mbtn active" id="btn-s" onclick="setMode('s')">Simplificado</button>
+        <button class="mbtn" id="btn-c" onclick="setMode('c')">Completo</button>
+      </div>
+    </div>
+
+    <div class="rbar">
+      <div>
+        <div class="rbar-title" id="res-title"></div>
+        <div class="chips" id="res-chips"></div>
+      </div>
+      <button class="bprint" onclick="window.print()">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        Imprimir
+      </button>
+    </div>
+
+    <div id="alerts-area"></div>
+
+    <!-- ══ SIMPLIFIED ══ -->
+    <div id="vs">
+      <div class="card-clinico">
+
+        <!-- header com doses em destaque -->
+        <div class="cc-hd">
+          <div class="cc-hd-left">
+            <div class="cc-hd-tag">Ajuste imediato da glargina</div>
+            <div class="cc-hd-title" id="s-action"></div>
+          </div>
+          <div class="cc-hd-right">
+            <div class="cc-hd-dose" id="s-dose-new"></div>
+            <div class="cc-hd-dose-lbl">IU/dia a partir do D0</div>
+          </div>
+        </div>
+
+        <!-- 3 passos em grade -->
+        <div class="cc-steps" id="s-steps"></div>
+
+        <!-- regra de emergência -->
+        <div class="cc-alert">
+          <span class="cc-alert-icon">⚠</span>
+          <span class="cc-alert-text"><strong>Hipoglicemia grave ou GJ &lt; 54 mg/dL:</strong> reduzir glargina 4 UI imediatamente — independente do valor mediano.</span>
+        </div>
+
+        <!-- tabela de titulação -->
+        <div class="cc-table-wrap">
+          <div class="cc-table-title">Titulação semanal da glargina (a partir da semana 5) · alvo GJ 100–125 mg/dL</div>
+          <table class="cctbl">
+            <thead>
+              <tr><th>Glicemia de jejum</th><th>mmol/L</th><th>Ajuste</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>≤ 70 mg/dL</td><td>≤ 3,9</td><td><span class="adj d4">↓ 4 UI</span></td></tr>
+              <tr><td>71 – 99 mg/dL</td><td>4,0 – 5,5</td><td><span class="adj d2">↓ 2 UI</span></td></tr>
+              <tr class="target-row"><td><strong>100 – 125 mg/dL</strong></td><td><strong>5,6 – 6,9</strong></td><td><span class="adj ok">Sem ajuste ✓</span></td></tr>
+              <tr><td>126 – 149 mg/dL</td><td>7,0 – 8,3</td><td><span class="adj u2">↑ 2 UI</span></td></tr>
+              <tr><td>150 – 179 mg/dL</td><td>8,4 – 9,9</td><td><span class="adj u4">↑ 4 UI</span></td></tr>
+              <tr><td>≥ 180 mg/dL</td><td>≥ 10,0</td><td><span class="adj u6">↑ 6 UI</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ══ COMPLETE ══ -->
+    <div id="vc" style="display:none;">
+
+      <div class="blk">
+        <div class="blk-hd"><div class="blk-num">1</div><h3>Protocolo de ajuste — insulina glargina</h3></div>
+        <div class="blk-bd" id="gl-steps"></div>
+      </div>
+
+      <div class="blk">
+        <div class="blk-hd"><div class="blk-num">2</div><h3>Cronograma de escalonamento — tirzepatida</h3></div>
+        <div class="blk-bd"><div class="tl" id="tl-tirz"></div></div>
+      </div>
+
+      <div class="blk">
+        <div class="blk-hd"><div class="blk-num">3</div><h3>Algoritmo de retitulação semanal da glargina (semana 5+)</h3></div>
+        <div class="blk-bd">
+          <p style="font-size:13px;color:var(--g600);margin-bottom:13px;">Mediana das 3 últimas GJ. Titular semanalmente. Alvo: <strong>100–125 mg/dL</strong>.</p>
+          <table class="ttbl2">
+            <thead><tr><th>GJ (mg/dL)</th><th>mmol/L</th><th>Ajuste da glargina</th></tr></thead>
+            <tbody>
+              <tr><td>≤ 70</td><td>≤ 3,9</td><td><span class="adj d4">↓ 4 unidades</span></td></tr>
+              <tr><td>71 – 99</td><td>4,0 – 5,5</td><td><span class="adj d2">↓ 2 unidades</span></td></tr>
+              <tr style="background:#F0FAF4;"><td><strong>100 – 125</strong></td><td><strong>5,6 – 6,9</strong></td><td><span class="adj ok">Sem ajuste — alvo</span></td></tr>
+              <tr><td>126 – 149</td><td>7,0 – 8,3</td><td><span class="adj u2">↑ 2 unidades</span></td></tr>
+              <tr><td>150 – 179</td><td>8,4 – 9,9</td><td><span class="adj u4">↑ 4 unidades</span></td></tr>
+              <tr><td>≥ 180</td><td>≥ 10,0</td><td><span class="adj u6">↑ 6 unidades</span></td></tr>
+            </tbody>
+          </table>
+          <div class="al" style="background:var(--red-light);border-color:var(--red);color:#8A0B1F;margin-top:13px;margin-bottom:0;">
+            <span>⚠</span>
+            <div><strong>Hipoglicemia grave ou GJ &lt; 54 mg/dL</strong>Reduzir glargina 4 unidades imediatamente, independentemente do valor mediano.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="blk">
+        <div class="blk-hd"><div class="blk-num">4</div><h3>Condutas de segurança</h3></div>
+        <div class="blk-bd">
+          <div class="sg">
+            <div class="sc red"><div class="sc-lbl">Hipoglicemia grave</div><p>GJ &lt; 54 mg/dL ou auxílio de terceiros. Reduzir glargina 4 UI imediatamente. Checar causa e horário. Reavaliar em 48–72h.</p></div>
+            <div class="sc amb"><div class="sc-lbl">Hipoglicemia leve-moderada</div><p>GJ 55–70 mg/dL. Reduzir glargina 2 UI. Manter tirzepatida. Intensificar automonitorização (AMG).</p></div>
+            <div class="sc grn"><div class="sc-lbl">Descontinuação da glargina</div><p>Alvo de GJ atingido por 2 semanas consecutivas com dose &lt; 10 UI: pode-se suspender temporariamente. Reavaliar a cada 2 semanas. No SURPASS-6, 8–19% descontinuaram até a semana 52.</p></div>
+            <div class="sc blu"><div class="sc-lbl">Automonitorização</div><p>GJ diariamente nas primeiras 4 semanas. Registrar 3 valores antes de cada titulação semanal para cálculo da mediana.</p></div>
+          </div>
+          <div class="ref">
+            <strong>Referência</strong>
+            Rosenstock J, Frías JP, Rodbard HW, et al. Tirzepatide vs Insulin Lispro Added to Basal Insulin in Type 2 Diabetes — The SURPASS-6 Randomized Clinical Trial. <em>JAMA.</em> 2023;330(17):1631–1640.
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+<footer class="ftr">
+  <strong>Eli Lilly do Brasil · Medical Affairs</strong><br>
+  Material de uso médico. Não substitui o julgamento clínico individualizado. Baseado no protocolo SURPASS-6 (Rosenstock et al., JAMA 2023).
+</footer>
+
+<script>
+let mode = 's';
+function setMode(m) {
+  mode = m;
+  document.getElementById('vs').style.display = m==='s' ? 'block' : 'none';
+  document.getElementById('vc').style.display = m==='c' ? 'block' : 'none';
+  document.getElementById('btn-s').classList.toggle('active', m==='s');
+  document.getElementById('btn-c').classList.toggle('active', m==='c');
+}
+function addW(d,w){const x=new Date(d);x.setDate(x.getDate()+w*7);return x;}
+function fmt(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric'});}
+function fmtL(d){return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});}
+function expG(dose,base){return Math.round(base*({'5':0.43,'10':0.26,'15':0.18}[dose]||0.30));}
+
+function calcular() {
+  const dose=parseFloat(document.getElementById('ins-dose').value);
+  const peso=parseFloat(document.getElementById('peso').value);
+  const dv=document.getElementById('start-date').value;
+  const td=document.getElementById('tirz-dose').value;
+  const hb=parseFloat(document.getElementById('hba1c').value);
+  if(!dose||!peso||!dv||!td){alert('Preencha todos os campos obrigatórios.');return;}
+
+  const sd=new Date(dv+'T00:00:00');
+  const dkg=(dose/peso).toFixed(2);
+  const red=Math.round(dose*.7);
+  const rkg=(red/peso).toFixed(2);
+  const eg=expG(td,dose);
+  const d4=fmt(addW(sd,4));
+
+  document.getElementById('results').style.display='block';
+  document.getElementById('res-title').textContent='Tirzepatida '+td+' mg — protocolo de ajuste';
+  document.getElementById('res-chips').innerHTML=
+    `<div class="chip">Glargina atual: <strong>${dose} IU/dia</strong></div>`+
+    `<div class="chip">→ Reduzida: <strong>${red} IU/dia</strong></div>`+
+    `<div class="chip">Início: <strong>${fmtL(sd)}</strong></div>`+
+    (hb?`<div class="chip">HbA1c: <strong>${hb}%</strong></div>`:'');
+
+  // alerts
+  let al='';
+  if(parseFloat(dkg)>0.5) al+=`<div class="al warn">⚠ <div><strong>Dose basal elevada (${dkg} IU/kg/dia)</strong>Acima de 0,5 IU/kg — risco aumentado de hipoglicemia. Redução de 30% é mandatória.</div></div>`;
+  if(hb&&hb<8.0) al+=`<div class="al info">ℹ <div><strong>HbA1c &lt; 8,0%</strong>SURPASS-6: participantes com HbA1c médio de 8,8%. Considere abordagem conservadora.</div></div>`;
+  document.getElementById('alerts-area').innerHTML=al;
+
+  // SIMPLIFIED — header
+  document.getElementById('s-action').textContent=`${dose} UI → ${red} UI (−30%) no D0`;
+  document.getElementById('s-dose-new').textContent=red;
+
+  // SIMPLIFIED — steps
+  document.getElementById('s-steps').innerHTML=`
+    <div class="cc-step-row">
+      <div class="cs-marker-wrap"><div class="cs-marker cs-m-red">D0</div><div class="cs-line"></div></div>
+      <div class="cs-body">
+        <div class="cs-period">${fmt(sd)} — início imediato</div>
+        <div class="cs-action">Reduzir glargina: <span class="cs-dose-pill old">${dose} UI</span> → <span class="cs-dose-pill nw">${red} UI</span></div>
+        <div class="cs-detail">Aplicar na mesma administração de início da tirzepatida.</div>
+      </div>
+    </div>
+    <div class="cc-step-row">
+      <div class="cs-marker-wrap"><div class="cs-marker cs-m-amb">1–4</div><div class="cs-line"></div></div>
+      <div class="cs-body">
+        <div class="cs-period">Semanas 1 a 4 · até ${d4}</div>
+        <div class="cs-action">Manter <strong>${red} UI</strong> — dose congelada</div>
+        <div class="cs-detail">Não alterar, exceto hipoglicemia grave ou hiperglicemia grave. Medir GJ diariamente.</div>
+      </div>
+    </div>
+    <div class="cc-step-row">
+      <div class="cs-marker-wrap"><div class="cs-marker cs-m-grn">5+</div></div>
+      <div class="cs-body">
+        <div class="cs-period">Semana 5 em diante · a partir de ${d4}</div>
+        <div class="cs-action">Retitular semanalmente conforme tabela abaixo</div>
+        <div class="cs-detail">Meta estimada na semana 52 com tirzepatida ${td} mg: <strong>~${eg} IU/dia</strong>.</div>
+      </div>
+    </div>`;
+
+  // COMPLETE — steps
+  document.getElementById('gl-steps').innerHTML=`
+    <div class="step"><div class="si d0">🔴</div><div><div class="sw">Dia 0 — ${fmt(sd)}</div><div class="st">Redução obrigatória de 30%</div><div class="sb">Reduzir de <span class="tg old">${dose} UI</span> para <span class="tg nw">${red} UI</span>. Não alterar nas próximas 4 semanas, exceto hipoglicemia grave ou hiperglicemia grave.</div></div></div>
+    <div class="step"><div class="si s14">🟡</div><div><div class="sw">Semanas 1–4 · até ${d4}</div><div class="st">Manter <span class="tg amb">${red} UI</span> — período de estabilização</div><div class="sb">Medir GJ diariamente. Alvo: <strong>100–125 mg/dL</strong>. Intervir apenas em hipoglicemia grave (GJ &lt; 54 mg/dL ou auxílio).</div></div></div>
+    <div class="step"><div class="si s5p">🟢</div><div><div class="sw">Semana 5+ · a partir de ${d4}</div><div class="st">Retitulação semanal conforme algoritmo</div><div class="sb">Mediana das 3 últimas GJ. Dose estimada na semana 52: <span class="tg tgt">~${eg} IU/dia</span> com tirzepatida ${td} mg.</div></div></div>`;
+
+  // COMPLETE — timeline
+  const doses=[2.5];const tn=parseFloat(td);
+  if(tn>=5)doses.push(5);if(tn>=10)doses.push(10);if(tn>=15)doses.push(15);
+  let tl='';
+  doses.forEach((d,i)=>{
+    const wk=i*4;const isA=d===tn;
+    tl+=`<div class="tli${isA?' done':''}"><div class="tw">Semana ${wk}–${wk+3} · ${fmt(addW(sd,wk))}</div><div class="tt">${d} mg/semana${isA?' — dose alvo ✓':''}</div><div class="td">Escalonamento de 2,5 mg a cada 4 semanas.</div></div>`;
+  });
+  const mw=doses.length*4;
+  tl+=`<div class="tli done"><div class="tw">Semana ${mw}+ · ${fmt(addW(sd,mw))}</div><div class="tt">Manutenção: ${td} mg/semana</div><div class="td">Titulação semanal da glargina continua conforme algoritmo.</div></div>`;
+  document.getElementById('tl-tirz').innerHTML=tl;
+
+  setMode(mode);
+  setTimeout(()=>document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+function limpar(){
+  ['ins-dose','peso','start-date','tirz-dose','hba1c'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('results').style.display='none';
+}
+</script>
+</body>
+</html>
